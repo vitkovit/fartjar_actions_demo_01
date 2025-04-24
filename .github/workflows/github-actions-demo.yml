@@ -18,7 +18,7 @@ on:
         required: true 
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - run: |
@@ -29,3 +29,35 @@ jobs:
         run: |
           echo the repository ${{ github.repository }} contains:
           tree
+  Test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: Build
+    environment: Test
+    steps:
+      - run: echo "Testing..."
+      
+  Load-Test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: [Test, Load-Test]
+    environment: 
+      name: Production
+      url: https://writeabout.net
+    if: github.event.inputs.environment == 'Production'
+    steps:
+      - run: |
+          echo "step 1"
+          sleep 5
+      - run: |
+          echo "step 2"
+          sleep 5
+      - run: |
+          echo "step 3"
+          sleep 5
+      - run: |
+          echo "step 4"
+          sleep 5
+      - run: |
+          echo "step 5"
+          sleep 5
